@@ -14,19 +14,26 @@ const mockUser = {
 };
 
 router.post('/login', (req, res) => {
-    //console.log(req.body)
+   
+    const { username, password, profile} = req.body
 
-    //const { username, password } = req.body
-    //const { firstName, lastName, age} = req.body
-
-    const token = jwt.sign({ username: 'authguy', profile: {
-        firstName: 'Chris',
-        lastName: "Wolstenholme",
-        age: 43
-    }}, 'mypassword',)
-
-    res.json(token)
-
+     const ValidUsername = username === mockUser.username
+     const ValidPassword = password === mockUser.password
+    //console.log(mockUser)
+    //console.log(ValidUsername)
+    //console.log(ValidPassword)
+     try {
+        if (ValidUsername && ValidPassword) {
+            const mockUser = jwt.sign({ username, password, profile}, 'mypassword')
+            console.log(mockUser)
+            res.json(mockUser)
+        }    
+        else {
+            return res.status(400).json({ msg: "Invalid username or password"})
+        }
+     } catch (e) {
+     res.json( { error: e.message })
+    }
 });
 
 router.get('/profile', (req, res) => {
@@ -38,8 +45,8 @@ router.get('/profile', (req, res) => {
     try {
         const profile = jwt.verify(authorization, 'mypassword')
         res.json(profile)
-    } catch (e) {
-        res.json( err. message)
+    } catch (err) {
+        res.json( { error: e.message } )
     }
 });
 
